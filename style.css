@@ -1,0 +1,48 @@
+@font-face {
+    font-family: 'Finlandica';
+    src: url('assets/fonts/finlandica/Finlandica-BoldItalic.ttf') format('truetype');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+body {
+    overflow: hidden;
+}
+
+#canvas1 {
+    border: 5px solid black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);    
+    max-width: 100%;
+    max-height: 100%;
+}
+
+img, audio {
+    display: none;
+}
+
+#loading_message {
+    font-family: 'Finlandica';
+    position: absolute;
+    top: 50%;
+    width: 100%; 
+    text-align: center;
+    font-size: 80px;
+}
+
+#noscript {
+    font-family: 'Finlandica';
+    position: absolute;
+    top: 25%;
+    width: 100%; 
+    text-align: center;
+    font-size: 30px;
+    color: red;
+}
