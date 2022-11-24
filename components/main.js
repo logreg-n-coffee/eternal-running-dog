@@ -1,5 +1,5 @@
 import Player from './player.js';
-import InputHandler from './input.js';
+import { InputHandler } from './controls.js';
 import { Background } from './background.js';
 import { FlyingEnemy, ClimbingEnemy, GroundEnemy } from './enemy.js';
 import { Carrot } from './replenishment.js';

@@ -1,10 +1,16 @@
 import CollisionAnimation from "./collisionAnimation.js";
 
-export default class InputHandler {
+export class InputHandler {
     constructor(game) {
         this.game = game;
         this.keys = [];  // contains all current keys - track all active keys
+        this.pressed = false;
+        this.touchX = 0;
+        this.touchY = 0;
+        this.touchTreshold = 28;
+        // keyboard events
         window.addEventListener('keydown', (e) => {
+            e.preventDefault();
             if (
                 (e.key === 'ArrowDown' ||
                     e.key === 'ArrowUp' ||
@@ -42,6 +48,7 @@ export default class InputHandler {
             // console.log(e.key);
         });
         window.addEventListener('keyup', (e) => {
+            e.preventDefault();
             if (
                 e.key === 'ArrowDown' ||
                 e.key === 'ArrowUp' ||
@@ -51,6 +58,51 @@ export default class InputHandler {
             ) {
                 this.keys.splice(this.keys.indexOf(e.key), 1);
             }
+        });
+        // touch screen events
+        window.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            // touchstart fires when the user starts touching
+            this.touchX = e.changedTouches[0].pageX;
+            this.touchY = e.changedTouches[0].pageY;
+        });
+        window.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            // touchmove keeps firing when user keeps touching
+            const swipeXDistance = e.changedTouches[0].pageX - this.touchX;
+            const swipeYDistance = e.changedTouches[0].pageY - this.touchY;
+            // swipe left and right
+            if (
+                swipeXDistance < -this.touchTreshold &&
+                this.keys.indexOf('ArrowLeft') === -1
+            ) {
+                this.keys.push('ArrowLeft');
+            } else if (
+                swipeXDistance > this.touchTreshold &&
+                this.keys.indexOf('ArrowRight') === -1
+            ) {
+                this.keys.push('ArrowRight');
+            }
+            // swipe up and down
+            if (
+                swipeYDistance < -this.touchTreshold &&
+                this.keys.indexOf('ArrowUp') === -1
+            ) {
+                this.keys.push('ArrowUp');
+            } else if (
+                swipeYDistance > this.touchTreshold &&
+                this.keys.indexOf('ArrowDown') === -1
+            ) {
+                this.keys.push('ArrowDown');
+            }
+        });
+        window.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            // clean up
+            this.keys.splice(this.keys.indexOf('ArrowLeft'), 1);
+            this.keys.splice(this.keys.indexOf('ArrowRight'), 1);
+            this.keys.splice(this.keys.indexOf('ArrowUp'), 1);
+            this.keys.splice(this.keys.indexOf('ArrowDown'), 1);
         });
     }
 }

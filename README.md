@@ -29,10 +29,20 @@ and become invulnerable.
 
 **Restart**: Press **R** to restart/reload the game.
 
+# Touch Controls
+
+- jump up (**Move Up**),
+- dive down (**Move Down**),
+- move left (**Move Left**), or
+- move right (**Move Right**)
+
+- superpower fireball: ***under development***
+
 ## Acknowledgements
 
 - [Bevouliin](https://bevouliin.com)
 - [Frank's Laboratory](https://www.youtube.com/c/Frankslaboratory)
+- [Background Music: Jeremy Blake - Powerup](https://directory.audio/free-music/dance-electronic/2169-jeremy-blake-powerup)
 
 ## Author
 
