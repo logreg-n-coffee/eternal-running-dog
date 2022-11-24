@@ -35,7 +35,7 @@ export class Background {
         this.width = 1667;
         this.height = 500;
         this.bgm = document.getElementById('bgm');
-        this.playBGM = true;
+        this.playBGM = false;
         this.layer1Image = document.getElementById('layer1');
         this.layer2Image = document.getElementById('layer2');
         this.layer3Image = document.getElementById('layer3');
