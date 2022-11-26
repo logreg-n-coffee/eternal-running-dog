@@ -7,6 +7,7 @@ export class InputHandler {
         this.pressed = false;
         this.touchX = 0;
         this.touchY = 0;
+        this.leftTouchID = -1;  // record the left division of the window 
         this.touchTreshold = 28;
         // keyboard events
         window.addEventListener('keydown', (e) => {
@@ -60,49 +61,108 @@ export class InputHandler {
             }
         });
         // touch screen events
-        window.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            // touchstart fires when the user starts touching
-            this.touchX = e.changedTouches[0].pageX;
-            this.touchY = e.changedTouches[0].pageY;
-        });
-        window.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            // touchmove keeps firing when user keeps touching
-            const swipeXDistance = e.changedTouches[0].pageX - this.touchX;
-            const swipeYDistance = e.changedTouches[0].pageY - this.touchY;
-            // swipe left and right
-            if (
-                swipeXDistance < -this.touchTreshold &&
-                this.keys.indexOf('ArrowLeft') === -1
-            ) {
-                this.keys.push('ArrowLeft');
-            } else if (
-                swipeXDistance > this.touchTreshold &&
-                this.keys.indexOf('ArrowRight') === -1
-            ) {
-                this.keys.push('ArrowRight');
+        window.addEventListener(
+            'touchstart',
+            (e) => {
+                e.preventDefault();
+
+                // touchstart fires when the user starts touching
+                for (let i = 0; i < e.changedTouches.length; i++) {
+                    const touch = e.changedTouches[i];
+                    // split the touches from the left division (30%) and right division (70%)
+                    if (
+                        this.leftTouchID < 0 &&
+                        touch.clientX < this.game.width * 0.3
+                    ) {
+                        this.leftTouchID = touch.identifier; // record the left touch ID
+                        // start the fireball state
+                        if (this.keys.indexOf(' ') === -1) {
+                            this.keys.push(' ');
+                            continue;
+                        }
+                    } else {
+                        this.touchX = touch.pageX;
+                        this.touchY = touch.pageY;
+                    }
+                }
+            },
+            {
+                passive: false,
             }
-            // swipe up and down
-            if (
-                swipeYDistance < -this.touchTreshold &&
-                this.keys.indexOf('ArrowUp') === -1
-            ) {
-                this.keys.push('ArrowUp');
-            } else if (
-                swipeYDistance > this.touchTreshold &&
-                this.keys.indexOf('ArrowDown') === -1
-            ) {
-                this.keys.push('ArrowDown');
+        );
+        window.addEventListener(
+            'touchmove',
+            (e) => {
+                e.preventDefault();
+
+                for (let i = 0; i < e.changedTouches.length; i++) {
+                    const touch = e.changedTouches[i];
+
+                    if (this.leftTouchID === touch.identifier) {
+                        // do the fireball state when the touch is on the left side
+                        if (this.keys.indexOf(' ') === -1) {
+                            this.keys.push(' ');
+                            continue;
+                        }
+                    } else {
+                        // for touches outside of the left division - controls
+                        // touchmove keeps firing when user keeps touching
+                        const swipeXDistance = touch.pageX - this.touchX;
+                        const swipeYDistance = touch.pageY - this.touchY;
+                        // swipe left and right
+                        if (
+                            swipeXDistance < -this.touchTreshold &&
+                            this.keys.indexOf('ArrowLeft') === -1
+                        ) {
+                            this.keys.push('ArrowLeft');
+                        } else if (
+                            swipeXDistance > this.touchTreshold &&
+                            this.keys.indexOf('ArrowRight') === -1
+                        ) {
+                            this.keys.push('ArrowRight');
+                        }
+                        // swipe up and down
+                        if (
+                            swipeYDistance < -this.touchTreshold &&
+                            this.keys.indexOf('ArrowUp') === -1
+                        ) {
+                            this.keys.push('ArrowUp');
+                        } else if (
+                            swipeYDistance > this.touchTreshold &&
+                            this.keys.indexOf('ArrowDown') === -1
+                        ) {
+                            this.keys.push('ArrowDown');
+                        }
+                    }
+                }
+            },
+            {
+                passive: false,
             }
-        });
-        window.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            // clean up
-            this.keys.splice(this.keys.indexOf('ArrowLeft'), 1);
-            this.keys.splice(this.keys.indexOf('ArrowRight'), 1);
-            this.keys.splice(this.keys.indexOf('ArrowUp'), 1);
-            this.keys.splice(this.keys.indexOf('ArrowDown'), 1);
-        });
+        );
+        window.addEventListener(
+            'touchend',
+            (e) => {
+                e.preventDefault();
+                // restore the leftTouch identifier
+                for (let i = 0; i < e.changedTouches.length; i++) {
+                    const touch = e.changedTouches[i];
+                    if (this.leftTouchID === touch.identifier) {
+                        // restore the leftTouch identifier after the touch ends
+                        this.leftTouchID = -1;
+                        this.keys.splice(this.keys.indexOf(' '), 1);
+                    } else {
+                        // clean up the effects brought by the right division of the window
+                        this.keys.splice(this.keys.indexOf('ArrowLeft'), 1);
+                        this.keys.splice(this.keys.indexOf('ArrowRight'), 1);
+                        this.keys.splice(this.keys.indexOf('ArrowUp'), 1);
+                        this.keys.splice(this.keys.indexOf('ArrowDown'), 1);
+                    }
+                }
+            },
+            {
+                passive: false,
+            }
+        );
     }
 }
